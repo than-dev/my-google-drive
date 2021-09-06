@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Google Drive Clone - JSExpert #5",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "start": "npx http-server public"
@@ -19,8 +20,7 @@
   },
   "homepage": "https://github.com/NathanCotrim/My-GoogleDrive#readme",
   "devDependencies": {
-    "jest": "^27.1.0",
-    "nodemon": "2.0"
+    "jest": "^27.1.0"
   },
   "dependencies": {
     "pino": "6.8",
