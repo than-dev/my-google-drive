@@ -17,7 +17,7 @@ export class Routes {
 
     async options(req, res) {
         res.writeHead(204)
-        res.end('hello world')
+        res.end('options')
     }
     
     async post(req, res) {
@@ -34,7 +34,7 @@ export class Routes {
 
     handler(req, res) {
         res.setHeader('Access-Control-Allow-Origin', '*')
-        const chosen = this[req.method.toLowerCase()] || this.defaultRoute()
+        const chosen = this[req.method.toLowerCase()] || this.defaultRoute
 
         return chosen.apply(this, [req, res])
     }
