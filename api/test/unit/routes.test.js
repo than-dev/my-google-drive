@@ -63,8 +63,10 @@ describe('Routes', () => {
             }
 
             params.req.method = 'GET'
+            jest.spyOn(routes, routes.get.name).mockResolvedValue()
+
             await routes.handler(...params.values())
-            expect(params.res.end).toHaveBeenCalled()
+            expect(routes.get).toHaveBeenCalled()
         })
 
         it('should call options if given a method === OPTIONS', async () => {
