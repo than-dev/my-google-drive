@@ -43,7 +43,7 @@ describe('Routes', () => {
             expect(params.res.end).toHaveBeenCalledWith('hello world')
         })
 
-        it('should call post if given a method === POST', async () => {
+        it('should call post if given method === POST', async () => {
              const routes = new Routes()
             const params = {
                 ...defaultParams
@@ -56,7 +56,7 @@ describe('Routes', () => {
             expect(routes.post).toHaveBeenCalled()
         })
 
-        it('should call get if given a method === GET', async () => {
+        it('should call get if given method === GET', async () => {
                 const routes = new Routes()
             const params = {
                 ...defaultParams
@@ -69,7 +69,7 @@ describe('Routes', () => {
             expect(routes.get).toHaveBeenCalled()
         })
 
-        it('should call options if given a method === OPTIONS', async () => {
+        it('should call options if given method === OPTIONS', async () => {
              const routes = new Routes()
             const params = {
                 ...defaultParams
@@ -91,5 +91,18 @@ describe('Routes', () => {
             await routes.handler(...params.values())
             expect(params.res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Origin', '*')
         })
+    })
+
+    describe('Get', () => {
+        // it('should list all files downloaded if given method GET', async () => {
+        //     const fileStatusesMock = [
+        //         {
+        //             size: 197657,
+        //             birthtime: '2021-09-03T20:56:28.443Z',
+        //             owner: 'nathan',
+        //             fileName: 'file.any'
+        //         }
+        //     ]
+        // })
     })
 })
