@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --no-coverage --runInBand",
+    "test:watch": "NODE_OPTIONS=--experimental-vm-modules npx jest --no-coverage  --watch --runInBand",
+    "test:cov": "NODE_OPTIONS=--experimental-vm-modules npx jest --no-cache --runInBand --coverage",
     "start": "node src/index.js"
   },
   "repository": {
