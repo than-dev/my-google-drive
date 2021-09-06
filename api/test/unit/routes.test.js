@@ -78,5 +78,16 @@ describe('Routes', () => {
 
         //     expect(postSpy).toHaveBeenCalled()
         // })
+
+        it('should set any request with CORS enabled', () => {
+            const routes = new Routes()
+            const params = {
+                ...defaultParams
+            }
+
+            params.req.method = 'any'
+            routes.handler(...params.values())
+            expect(params.res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Origin', '*')
+        })
     })
 })
