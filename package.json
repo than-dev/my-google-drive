@@ -1,0 +1,21 @@
+{
+  "name": "google-drive",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "npx http-server public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NathanCotrim/My-GoogleDrive.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NathanCotrim/My-GoogleDrive/issues"
+  },
+  "homepage": "https://github.com/NathanCotrim/My-GoogleDrive#readme"
+}
