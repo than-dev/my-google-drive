@@ -1,7 +1,7 @@
 {
   "name": "google-drive",
   "version": "1.0.0",
-  "description": "",
+  "description": "Google Drive Clone - JSExpert #5",
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -12,10 +12,19 @@
     "url": "git+https://github.com/NathanCotrim/My-GoogleDrive.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "NathanCotrim",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/NathanCotrim/My-GoogleDrive/issues"
   },
-  "homepage": "https://github.com/NathanCotrim/My-GoogleDrive#readme"
+  "homepage": "https://github.com/NathanCotrim/My-GoogleDrive#readme",
+  "devDependencies": {
+    "jest": "^27.1.0",
+    "nodemon": "2.0"
+  },
+  "dependencies": {
+    "pino": "6.8",
+    "pino-pretty": "5.1",
+    "socket.io": "4.1"
+  }
 }
