@@ -1,12 +1,12 @@
 {
-  "name": "google-drive",
+  "name": "google-drive-api",
   "version": "1.0.0",
   "description": "Google Drive Clone - JSExpert #5",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "jest",
-    "start": "npx http-server public"
+    "start": "node src/index.js"
   },
   "repository": {
     "type": "git",
