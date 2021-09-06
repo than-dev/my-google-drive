@@ -43,50 +43,48 @@ describe('Routes', () => {
             expect(params.res.end).toHaveBeenCalledWith('hello world')
         })
 
-        // it('should call post if method is === POST', async () => {
-        //     const routes = new Routes()
-        //     const postSpy = jest.spyOn('routes', 'post');
+        it('should call post if given a method === POST', async () => {
+             const routes = new Routes()
+            const params = {
+                ...defaultParams
+            }
 
-        //     const ioObj = {
-        //         to: (id) => ioObj,
-        //         emit: (event, message) => {}
-        //     }
+            params.req.method = 'POST'
+            routes.handler(...params.values())
+            expect(params.res.end).toHaveBeenCalledWith('hello world')
+        })
 
-        //     expect(postSpy).toHaveBeenCalled()
-        // })
+        it('should call options if given a method === OPTIONS', async () => {
+             const routes = new Routes()
+            const params = {
+                ...defaultParams
+            }
 
-        // it('should call options if method is === OPTIONS', async () => {
-        //     const routes = new Routes()
-        //     const postSpy = jest.spyOn('routes', 'post');
+            params.req.method = 'OPTIONS'
+            await routes.handler(...params.values())
+            expect(params.res.writeHead).toHaveBeenCalledWith(204)
+            expect(params.res.writeHead).toHaveBeenCalled()
+        })
 
-        //     const ioObj = {
-        //         to: (id) => ioObj,
-        //         emit: (event, message) => {}
-        //     }
+        it('should call get if given a method === GET', async () => {
+             const routes = new Routes()
+            const params = {
+                ...defaultParams
+            }
 
-        //     expect(postSpy).toHaveBeenCalled()
-        // })
+            params.req.method = 'GET'
+            await routes.handler(...params.values())
+            expect(params.res.end).toHaveBeenCalledWith('hello world')
+        })
 
-        // it('should call get if method is === GET', async () => {
-        //     const routes = new Routes()
-        //     const postSpy = jest.spyOn('routes', 'post');
-
-        //     const ioObj = {
-        //         to: (id) => ioObj,
-        //         emit: (event, message) => {}
-        //     }
-
-        //     expect(postSpy).toHaveBeenCalled()
-        // })
-
-        it('should set any request with CORS enabled', () => {
+        it('should set any request with CORS enabled', async () => {
             const routes = new Routes()
             const params = {
                 ...defaultParams
             }
 
             params.req.method = 'any'
-            routes.handler(...params.values())
+            await routes.handler(...params.values())
             expect(params.res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Origin', '*')
         })
     })
