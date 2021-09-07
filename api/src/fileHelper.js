@@ -1,9 +1,9 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 import prettyBytes from 'pretty-bytes'
 
 export class FileHelper {
-    static async getFileStatus(downloadsFolder) {
-        const currentFiles = await fs.readdir(downloadsFolder)
+    static async getFilesStatus(downloadsFolder) {
+        const currentFiles = await fs.promises.readdir(downloadsFolder)
         const statuses = await Promise
             .all(
                 currentFiles
@@ -11,7 +11,7 @@ export class FileHelper {
                         file => fs.promises.stat(`${downloadsFolder}/${file}`)
                     )
             )
-        let filesStatuses = []
+        const filesStatuses = []
         for (const fileIndex in currentFiles) {
             const { birthtime, size } = statuses[fileIndex]
             filesStatuses.push({

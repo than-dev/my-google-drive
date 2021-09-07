@@ -1,54 +1,54 @@
-import { Routes } from '../../src/routes.js';
 import { jest } from '@jest/globals';
-import fs from 'fs/promises';
+import fs from 'fs';
 import { FileHelper } from '../../src/fileHelper.js';
 
 describe('FileHelper', () => {
     describe('GetFileStatus', () => {
         it('should return files statuses in correct format', async () => {
             const statMock = {
-                dev: 2053,
-                mode: 33204,
+                dev: 16777220,
+                mode: 33188,
                 nlink: 1,
-                uid: 1000,
-                gid: 1000,
+                uid: 501,
+                gid: 20,
                 rdev: 0,
                 blksize: 4096,
-                ino: 957890,
-                size: 37343,
-                blocks: 80,
-                atimeMs: 1630963679699.6453,
-                mtimeMs: 1630963679163.6584,
-                ctimeMs: 1630963679163.6584,
-                birthtimeMs: 1630963679151.6587,
-                atime: '2021-09-06T21:27:59.700Z',
-                mtime: '2021-09-06T21:27:59.164Z',
-                ctime: '2021-09-06T21:27:59.164Z',
-                birthtime: '2021-09-06T21:27:59.152Z'
+                ino: 214187433,
+                size: 188188,
+                blocks: 368,
+                atimeMs: 1630702590337.3582,
+                mtimeMs: 1630702588444.2876,
+                ctimeMs: 1630702588452.0754,
+                birthtimeMs: 1630702588443.3276,
+                atime: '2021-09-03T20:56:30.337Z',
+                mtime: '2021-09-03T20:56:28.444Z',
+                ctime: '2021-09-03T20:56:28.452Z',
+                birthtime: '2021-09-03T20:56:28.443Z'
             }
 
             const mockUser = 'nathan'
             process.env.USER = mockUser
-            const fileName = 'teste-img.jpg'
+            const filename = 'file.png'
 
-            jest.spyOn(fs, fs.stat.name).mockResolvedValue([ fileName ])
+            jest.spyOn(fs.promises, fs.promises.readdir.name)
+                .mockResolvedValue([filename])
+            
+            jest.spyOn(fs.promises, fs.promises.stat.name)
+                .mockResolvedValue(statMock)
+            
+            const result = await FileHelper.getFilesStatus("/tmp")
 
-            jest.spyOn(fs, fs.readdir.name).mockResolvedValue(statMock)
-
-            const fileHelper = new FileHelper()
-            const result = await fileHelper.getFileStatus('/tmp')
-
-            const expectResult = [
+            const expectedResult = [
                 {
-                    size: '37 kb',
-                    birthtime: statMock.birthtime,
+                    size: "188 kB",
+                    lastModified: statMock.birthtime,
                     owner: mockUser,
-                    fileName
+                    file: filename
                 }
             ]
 
-            expect(fs.stat).toHaveBeenCalledWith(`/tmp/${fileName}`)
-            expect(result).toMatchObject(expectResult)
+            expect(fs.promises.stat).toHaveBeenCalledWith(`/tmp/${filename}`)
+            expect(result).toMatchObject(expectedResult)
         })
     })
 })
