@@ -2,6 +2,22 @@ import { Routes } from '../../src/routes.js';
 import { jest } from '@jest/globals';
 
 describe('Routes', () => {
+    const defaultParams = {
+            req: {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                method: '',
+                body: {}
+            },
+            res: {
+                writeHead: jest.fn(),
+                setHeader: jest.fn(),
+                end: jest.fn()
+            },
+            values: () => Object.values(defaultParams)
+    }
+
     describe('Set Socket', () => {
         it('should store io instance', () => {
             const routes = new Routes()
@@ -16,21 +32,6 @@ describe('Routes', () => {
     })
 
     describe('Handler', () => {
-        const defaultParams = {
-            req: {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                method: '',
-                body: {}
-            },
-            res: {
-                writeHead: jest.fn(),
-                setHeader: jest.fn(),
-                end: jest.fn()
-            },
-            values: () => Object.values(defaultParams)
-        }
 
         it('should call defaultRoute if given an inexistent route', async () => {
             const routes = new Routes()
@@ -94,15 +95,28 @@ describe('Routes', () => {
     })
 
     describe('Get', () => {
-        // it('should list all files downloaded if given method GET', async () => {
-        //     const fileStatusesMock = [
-        //         {
-        //             size: 197657,
-        //             birthtime: '2021-09-03T20:56:28.443Z',
-        //             owner: 'nathan',
-        //             fileName: 'file.any'
-        //         }
-        //     ]
-        // })
+        it('should list all files downloaded if given method GET', async () => {
+            const routes = new Routes()
+            const params = {
+                ...defaultParams
+            }
+
+            const fileStatusesMock = [
+                {
+                    size: '188 kB',
+                    birthtime: '2021-09-03T20:56:28.443Z',
+                    owner: 'nathan',
+                    fileName: 'file.any'
+                }
+            ]
+
+            jest.spyOn(routes.fileHelper, routes.fileHelper.getFilesStatus.name).mockResolvedValue(fileStatusesMock)
+
+            params.req.method = 'GET'
+            await routes.handler(...params.values())
+
+            expect(params.res.writeHead).toHaveBeenCalledWith(200)
+            expect(params.res.end).toHaveBeenCalledWith(JSON.stringify(fileStatusesMock))
+        })
     })
 })
