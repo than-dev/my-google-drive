@@ -14,8 +14,8 @@ export class UploadHandler {
 
     }
 
-    onFile(fieldname, file, filename) {
-        const saveTo = `${this.downloads}`
+    async onFile(fieldname, file, filename) {
+        const saveTo = `${this.downloadsFolder}/${filename}`
         
         await pipeline(
             file,

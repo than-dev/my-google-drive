@@ -4,6 +4,7 @@ import {
     expect,
     jest
 } from '@jest/globals';
+import { resolve } from 'path';
 import fs from 'fs';
 import { Routes } from '../../src/routes.js';
 import { UploadHandler } from '../../src/uploadHandler.js';
@@ -42,7 +43,7 @@ describe('Upload Handler', () => {
     })
 
     describe('On File', () => {
-        it('should save a stream on disk when given', () => {
+        it('should save a stream on disk when given it', async () => {
             const chunks = ['hey', 'dude']
             const downloadsFolder = '/tmp'
             const handler = new UploadHandler({
@@ -54,6 +55,26 @@ describe('Upload Handler', () => {
             const onData = jest.fn()
 
             jest.spyOn(fs, fs.createWriteStream.name).mockImplementation(() => TestUtil.generateWritableStream(onData))
+
+            const onTransform = jest.fn()
+            
+            jest.spyOn(handler, handler.handleFileBytes.name).mockImplementation(() => TestUtil.generateTransformStream(onTransform))
+
+            const params = {
+                fieldname: 'video',
+                file: TestUtil.generateReadableStream(chunks),
+                filename: 'mockFile.mov'
+            }
+
+            await handler.onFile(...Object.values(params))
+
+            expect(onData.mock.calls.join()).toEqual(chunks.join())
+
+            expect(onTransform.mock.calls.join()).toEqual(chunks.join())
+
+            const expectFilename = resolve(handler.downloadsFolder, params.filename) 
+
+            expect(fs.createWriteStream).toHaveBeenCalledWith(expectFilename)
 
         })
     })

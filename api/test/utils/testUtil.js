@@ -1,5 +1,5 @@
 import { read } from 'fs';
-import { Readable, Writable } from 'stream';
+import { Readable, Writable, Transform } from 'stream';
 
 export class TestUtil {
     static generateReadableStream(data) {
@@ -15,11 +15,22 @@ export class TestUtil {
         })
     }
 
-       static generateWritableStream(onData) {
+    static generateWritableStream(onData) {
         return new Writable({
             objectMode: true,
             write(chunk, encoding, cb) {
                 onData(chunk)
+
+                cb(null, chunk)
+            }
+        })
+    }
+
+    static generateTransformStream(onTransform) {
+        return new Transform({
+            objectMode: true,
+            transform(chunk, encoding, cb) {
+                onTransform(chunk)
 
                 cb(null, chunk)
             }
