@@ -39,4 +39,16 @@ describe('Upload Handler', () => {
             expect(onFinish).toHaveBeenCalled()
         })
     })
+
+    describe('On File', () => {
+        it('should save a stream on disk when given', () => {
+            const chunks = ['hey', 'dude']
+            const downloadsFolder = '/tmp'
+            const handler = new UploadHandler({
+                io: ioObj,
+                socketId: '01',
+                downloadsFolder
+            })
+        })
+    })
 })
