@@ -15,11 +15,11 @@ export class TestUtil {
         })
     }
 
-       static generateWritableStream(fn) {
+       static generateWritableStream(onData) {
         return new Writable({
             objectMode: true,
             write(chunk, encoding, cb) {
-                fn(chunk)
+                onData(chunk)
 
                 cb(null, chunk)
             }

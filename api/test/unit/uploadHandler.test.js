@@ -4,6 +4,7 @@ import {
     expect,
     jest
 } from '@jest/globals';
+import fs from 'fs';
 import { Routes } from '../../src/routes.js';
 import { UploadHandler } from '../../src/uploadHandler.js';
 import { TestUtil } from '../utils/testUtil.js';
@@ -49,6 +50,11 @@ describe('Upload Handler', () => {
                 socketId: '01',
                 downloadsFolder
             })
+
+            const onData = jest.fn()
+
+            jest.spyOn(fs, fs.createWriteStream.name).mockImplementation(() => TestUtil.generateWritableStream(onData))
+
         })
     })
 })
