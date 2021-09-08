@@ -88,13 +88,14 @@ describe('Upload Handler', () => {
 
     describe('Handle File Bytes', () => {
         it('should call emit function and it is a transform stream', async () => {
-            jest.spyOn(ioObj, ioObj.to.name)
-            jest.spyOn(ioObj, ioObj.emit.name)
-
             const handler = new UploadHandler({
                 io: ioObj,
                 socketId: '01'
             })
+            
+            jest.spyOn(ioObj, ioObj.to.name)
+            jest.spyOn(ioObj, ioObj.emit.name)
+            jest.spyOn(handler, handler.canExecute.name).mockReturnValueOnce(true)
 
             const messages = ['hello']
             const source = TestUtil.generateReadableStream(messages)
