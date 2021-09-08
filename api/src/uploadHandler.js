@@ -8,10 +8,24 @@ export class UploadHandler {
         this.io = io;
         this.socketId = socketId;
         this.downloadsFolder = downloadsFolder;
+        this.ON_UPLOAD_EVENT = 'file-upload';
     }
 
-    handleFileBytes() {
+    handleFileBytes(filename) {
+        async function* handleData(source) {
+            let alreadyProcessed = 0;
 
+            for await (const chunk of source) {
+                yield chunk
+                alreadyProcessed += chunk.length
+
+                this.io.to(this.socketId).emit(this.ON_UPLOAD_EVENT, {alreadyProcessed, filename})
+                
+                logger.info(`File [${filename}] got ${alreadyProcessed} bytes to ${this.socketId}`)
+            }
+        }
+
+        return handleData.bind(this)
     }
 
     async onFile(fieldname, file, filename) {
