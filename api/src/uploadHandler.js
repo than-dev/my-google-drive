@@ -4,6 +4,8 @@ import fs from 'fs';
 import { logger } from './logger.js';
 
 export class UploadHandler {
+    lastMessageSent
+    
     constructor({ io, socketId, downloadsFolder, messageTimeDelay = 200 }) {
         this.io = io;
         this.socketId = socketId;
@@ -13,7 +15,7 @@ export class UploadHandler {
     }
 
     canExecute(lastExecution) {
-        return (Date.now() - lastExecution) > this.messageTimeDelay
+        return (Date.now() - lastExecution) >= this.messageTimeDelay
     }
 
     handleFileBytes(filename) {
@@ -24,12 +26,14 @@ export class UploadHandler {
 
             for await (const chunk of source) {
                 yield chunk
+
                 alreadyProcessed += chunk.length
-                if (!this.canExecute()) {
+                if (!this.canExecute(this.lastMessageSent)) {
                     continue;
                 }
 
-                this.io.to(this.socketId).emit(this.ON_UPLOAD_EVENT, {alreadyProcessed, filename})
+                this.lastMessageSent = Date.now()
+                this.io.to(this.socketId).emit(this.ON_UPLOAD_EVENT, { alreadyProcessed, filename })
                 
                 logger.info(`File [${filename}] got ${alreadyProcessed} bytes to ${this.socketId}`)
             }

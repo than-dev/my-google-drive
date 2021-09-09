@@ -8,7 +8,6 @@ import {
 import { resolve } from 'path';
 import fs from 'fs';
 import { logger } from '../../src/logger.js';
-import { Routes } from '../../src/routes.js';
 import { pipeline } from 'stream/promises';
 import { UploadHandler } from '../../src/uploadHandler.js';
 import { TestUtil } from '../utils/testUtil.js';
@@ -16,11 +15,11 @@ import { TestUtil } from '../utils/testUtil.js';
 describe('Upload Handler', () => {
     const ioObj = {
         to: (id) => ioObj,
-        emit: (event, message) => {}
+        emit: (event, message) => { }
     }
 
     beforeEach(() => {
-        jest.spyOn(logger, 'info').mockImplementation()
+        jest.spyOn(logger, 'info').mockImplementation(() => {})
     })
 
     describe('Register Events', () => {
@@ -116,6 +115,59 @@ describe('Upload Handler', () => {
             expect(onWrite).toBeCalledTimes(messages.length)
             expect(onWrite.mock.calls.join()).toEqual(messages.join())
         })
+
+        // it('should emit only one message during 2 seconds period', async () => {
+        //     const spiedEmit = jest.spyOn(ioObj, ioObj.emit.name)
+
+        //     const day = '2021-09-08 00:00'
+        //     // Date.now do this.lastMessages em handleBytes
+        //     const twoSecondsTimer = 2000
+
+        //     const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
+            
+        //     // -> hello arrived
+        //     const onFirstCanExecute = TestUtil.getTimeFromDate(`${day}:02`)
+        //     const onSecondUpdateLastMessageSent = onFirstCanExecute
+
+        //     // -> hey is out window time
+        //     const onSecondCanExecute = TestUtil.getTimeFromDate(`${day}:03`)
+
+        //     // -> world arrived
+        //     const onThirdCanExecute = TestUtil.getTimeFromDate(`${day}:04`)
+
+        //     TestUtil.mockDateNow(
+        //         [
+        //             onFirstLastMessageSent,
+        //             onFirstCanExecute,
+        //             onSecondUpdateLastMessageSent,
+        //             onSecondCanExecute,
+        //             onThirdCanExecute
+        //         ]
+        //     )
+
+        //     const messages = ['hello', 'hey', 'world']
+        //     const filename = 'filename.avi'
+        //     const expectMessagesSent = 2
+
+        //     const source = TestUtil.generateReadableStream(messages)
+        //     const handler = new UploadHandler({
+        //         twoSecondsTimer,
+        //         io: ioObj,
+        //         socketId: '01'
+        //     })
+
+        //     await pipeline(
+        //         source,
+        //         handler.handleFileBytes(filename)
+        //     )
+
+        //     expect(spiedEmit).toHaveBeenCalledTimes(expectMessagesSent)
+            
+        //     const [firstCallResult, secondCallResult] = spiedEmit.mock.calls
+            
+        //     expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: 'hello'.length, filename }])
+        //     expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: messages.join('').toString().length, filename }])
+        // })
     })
 
     describe('Can Execute', () => {
@@ -125,7 +177,7 @@ describe('Upload Handler', () => {
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
-                messageTimeDelay: timerDelay
+                twoSecondsTimer: timerDelay
             })
             
             const now = TestUtil.getTimeFromDate('2021-08-09 00:00:03')
@@ -143,7 +195,7 @@ describe('Upload Handler', () => {
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
-                messageTimeDelay: timerDelay
+                twoSecondsTimer: timerDelay
             })
             
             const now = TestUtil.getTimeFromDate('2021-08-09 00:00:01')
