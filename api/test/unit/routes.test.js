@@ -1,22 +1,30 @@
 import { Routes } from '../../src/routes.js';
 import { jest } from '@jest/globals';
+import { TestUtil } from '../utils/testUtil.js';
+import { UploadHandler } from '../../src/uploadHandler.js';
+import { logger } from '../../src/logger.js'
 
 describe('Routes', () => {
+    beforeEach(() => {
+        jest.spyOn(logger, 'info').mockImplementation();
+    });
+    
+    const req = TestUtil.generateReadableStream([ 'some file bytes'])
+    const res = TestUtil.generateWritableStream(() => {})
+
     const defaultParams = {
-            req: {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                method: '',
-                body: {}
-            },
-            res: {
-                writeHead: jest.fn(),
-                setHeader: jest.fn(),
-                end: jest.fn()
-            },
-            values: () => Object.values(defaultParams)
-    }
+        req: Object.assign(req, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            method: '',
+            body: {},
+        }),
+        res: Object.assign(res, {
+            writeHead: jest.fn(),
+            setHeader: jest.fn(),
+            end: jest.fn(),
+        }),
+        values: () => Object.values(defaultParams),
+    };
 
     describe('Set Socket', () => {
         it('should store io instance', () => {
@@ -117,6 +125,36 @@ describe('Routes', () => {
 
             expect(params.res.writeHead).toHaveBeenCalledWith(200)
             expect(params.res.end).toHaveBeenCalledWith(JSON.stringify(fileStatusesMock))
+        })
+    })
+
+    describe('Post', () => {
+        it('should validate post route workflow', async () => {
+            const routes = new Routes('/tmp')
+            const options = {
+                ...defaultParams
+            }
+
+            options.req.method = 'POST'
+            options.req.url = '?socketId=10'
+
+            jest.spyOn(
+                UploadHandler.prototype,
+                UploadHandler.prototype.registerEvents.name
+            ).mockImplementation((headers, onFinish) => {
+                const writable = TestUtil.generateWritableStream(() => {})
+                writable.on('finish', onFinish)
+
+                return writable
+            })
+
+            await routes.handler(...options.values())
+
+            expect(UploadHandler.prototype.registerEvents).toHaveBeenCalled()
+            expect(options.res.writeHead).toHaveBeenCalledWith(200)
+
+            const expectedResult = JSON.stringify({ result: 'Files uploaded with success' })
+			expect(options.res.end).toHaveBeenCalledWith(expectedResult)
         })
     })
 })
