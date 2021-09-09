@@ -116,57 +116,57 @@ describe('Upload Handler', () => {
             expect(onWrite.mock.calls.join()).toEqual(messages.join())
         })
 
-        // it('should emit only one message during 2 seconds period', async () => {
-        //     const spiedEmit = jest.spyOn(ioObj, ioObj.emit.name)
+        it('should emit only one message during 2 seconds period', async () => {
+            const spiedEmit = jest.spyOn(ioObj, ioObj.emit.name)
 
-        //     const day = '2021-09-08 00:00'
-        //     // Date.now do this.lastMessages em handleBytes
-        //     const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
+            const day = '2021-09-08 00:00'
+            // Date.now do this.lastMessages em handleBytes
+            const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
             
-        //     // -> hello arrived
-        //     const onFirstCanExecute = TestUtil.getTimeFromDate(`${day}:02`)
-        //     const onSecondUpdateLastMessageSent = onFirstCanExecute
+            // -> hello arrived
+            const onFirstCanExecute = TestUtil.getTimeFromDate(`${day}:02`)
+            const onSecondUpdateLastMessageSent = onFirstCanExecute
 
-        //     // -> hey is out window time
-        //     const onSecondCanExecute = TestUtil.getTimeFromDate(`${day}:03`)
+            // -> hey is out window time
+            const onSecondCanExecute = TestUtil.getTimeFromDate(`${day}:03`)
 
-        //     // -> world arrived
-        //     const onThirdCanExecute = TestUtil.getTimeFromDate(`${day}:04`)
+            // -> world arrived
+            const onThirdCanExecute = TestUtil.getTimeFromDate(`${day}:04`)
 
-        //     TestUtil.mockDateNow(
-        //         [
-        //             onFirstLastMessageSent,
-        //             onFirstCanExecute,
-        //             onSecondUpdateLastMessageSent,
-        //             onSecondCanExecute,
-        //             onThirdCanExecute
-        //         ]
-        //     )
+            TestUtil.mockDateNow(
+                [
+                    onFirstLastMessageSent,
+                    onFirstCanExecute,
+                    onSecondUpdateLastMessageSent,
+                    onSecondCanExecute,
+                    onThirdCanExecute
+                ]
+            )
 
-        //     const messages = ['hello', 'hey', 'world']
-        //     const filename = 'filename.avi'
-        //     const expectMessagesSent = 2
-        //     const messageTimeDelay = 2000
+            const messages = ['hello', 'hey', 'world']
+            const filename = 'filename.avi'
+            const expectMessagesSent = 2
+            const messageTimeDelay = 2000
 
-        //     const source = TestUtil.generateReadableStream(messages)
-        //     const handler = new UploadHandler({
-        //         messageTimeDelay,
-        //         io: ioObj,
-        //         socketId: '01'
-        //     })
+            const source = TestUtil.generateReadableStream(messages)
+            const handler = new UploadHandler({
+                messageTimeDelay,
+                io: ioObj,
+                socketId: '01'
+            })
 
-        //     await pipeline(
-        //         source,
-        //         handler.handleFileBytes(filename)
-        //     )
+            await pipeline(
+                source,
+                handler.handleFileBytes(filename)
+            )
 
-        //     expect(ioObj.emit).toHaveBeenCalledTimes(expectMessagesSent)
+            expect(ioObj.emit).toHaveBeenCalledTimes(expectMessagesSent)
             
-        //     const [firstCallResult, secondCallResult] = ioObj.emit.mock.calls
+            const [firstCallResult, secondCallResult] = ioObj.emit.mock.calls
             
-        //     expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: 'hello'.length, filename }])
-        //     expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: messages.join('').toString().length, filename }])
-        // })
+            expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: 'hello'.length, filename }])
+            expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: messages.join('').toString().length, filename }])
+        })
     })
 
     describe('Can Execute', () => {

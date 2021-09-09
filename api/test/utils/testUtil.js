@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals'
-import { notEqual } from 'assert';
 import { Readable, Writable, Transform } from 'stream';
 
 export class TestUtil {
@@ -46,7 +45,7 @@ export class TestUtil {
         const now = jest.spyOn(global.Date, global.Date.now.name)
 
         mockImplementationPeriods.forEach(time => {
-            now.mockReturnValue(time)
+            now.mockReturnValueOnce(time)
         })
     }
 }
