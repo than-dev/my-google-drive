@@ -63,6 +63,12 @@ describe('Routes Integration Test', () => {
 			
 			const dirAfterRun = await fs.promises.readdir(defaultDownloadsFolder)
 			expect(dirAfterRun).toEqual([filename])
+
+			expect(defaultParams.res.writeHead).toHaveBeenCalledWith(200)
+			
+			const expectedResult = JSON.stringify({ result: 'Files uploaded with success' })
+			
+			expect(defaultParams.res.end).toHaveBeenCalledWith(expectedResult)
 		});
 	});
 });

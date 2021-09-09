@@ -1,6 +1,6 @@
 import {
     describe,
-    test,
+    it,
     expect,
     jest,
     beforeEach
@@ -19,7 +19,7 @@ describe('Upload Handler', () => {
     }
 
     beforeEach(() => {
-        jest.spyOn(logger, 'info').mockImplementation(() => {})
+        jest.spyOn(logger, 'info').mockImplementation()
     })
 
     describe('Register Events', () => {
@@ -121,8 +121,6 @@ describe('Upload Handler', () => {
 
         //     const day = '2021-09-08 00:00'
         //     // Date.now do this.lastMessages em handleBytes
-        //     const twoSecondsTimer = 2000
-
         //     const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
             
         //     // -> hello arrived
@@ -148,10 +146,11 @@ describe('Upload Handler', () => {
         //     const messages = ['hello', 'hey', 'world']
         //     const filename = 'filename.avi'
         //     const expectMessagesSent = 2
+        //     const messageTimeDelay = 2000
 
         //     const source = TestUtil.generateReadableStream(messages)
         //     const handler = new UploadHandler({
-        //         twoSecondsTimer,
+        //         messageTimeDelay,
         //         io: ioObj,
         //         socketId: '01'
         //     })
@@ -161,9 +160,9 @@ describe('Upload Handler', () => {
         //         handler.handleFileBytes(filename)
         //     )
 
-        //     expect(spiedEmit).toHaveBeenCalledTimes(expectMessagesSent)
+        //     expect(ioObj.emit).toHaveBeenCalledTimes(expectMessagesSent)
             
-        //     const [firstCallResult, secondCallResult] = spiedEmit.mock.calls
+        //     const [firstCallResult, secondCallResult] = ioObj.emit.mock.calls
             
         //     expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: 'hello'.length, filename }])
         //     expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: messages.join('').toString().length, filename }])
@@ -177,7 +176,7 @@ describe('Upload Handler', () => {
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
-                twoSecondsTimer: timerDelay
+                messageTimeDelay: timerDelay
             })
             
             const now = TestUtil.getTimeFromDate('2021-08-09 00:00:03')
@@ -195,7 +194,7 @@ describe('Upload Handler', () => {
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
-                twoSecondsTimer: timerDelay
+                messageTimeDelay: timerDelay
             })
             
             const now = TestUtil.getTimeFromDate('2021-08-09 00:00:01')

@@ -4,8 +4,6 @@ import fs from 'fs';
 import { logger } from './logger.js';
 
 export class UploadHandler {
-    lastMessageSent
-    
     constructor({ io, socketId, downloadsFolder, messageTimeDelay = 200 }) {
         this.io = io;
         this.socketId = socketId;
