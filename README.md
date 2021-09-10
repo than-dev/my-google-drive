@@ -10,7 +10,7 @@
 - Web API
     - [x] Deve listar arquivos baixados
     - [x] Deve receber stream de arquivos e salvar em disco 
-    - [] Deve notificar sobre progresso de armazenamento de arquivos em disco 
+    - [x] Deve notificar sobre progresso de armazenamento de arquivos em disco 
     - [x] Deve permitir upload de arquivos em formato image, video ou audio
     - [x] Deve atingir 100% de cobertura de código em testes
 
@@ -28,7 +28,3 @@
 - O Layout foi adaptado a partir do projeto do brasileiro [Leonardo Santo](https://github.com/leoespsanto) disponibilizado no [codepen](https://codepen.io/leoespsanto/pen/KZMMKG).
 
 <br>
-  
-## Créditos ao Projeto <3
-
-- Esse projeto foi desenvolvido a partir da semana JS Expert #5, Erick Wendell!
