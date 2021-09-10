@@ -14,8 +14,12 @@ export class ViewManager {
         })
     }
 
+    configureOnFileChange(fn) {
+        this.fileElement.onchange = (e) => fn(e.target.files)
+    }
+
     configureFileBtnClick() {
-        this.newFileBtn.onclick() = () => this.fileElement.click()
+        this.newFileBtn.onclick = () => this.fileElement.click()
     }
 
     getIcon(file) {
