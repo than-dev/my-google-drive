@@ -1,7 +1,7 @@
 import fs from 'fs'
 import prettyBytes from 'pretty-bytes'
 
-export class FileHelper {
+export default class FileHelper {
     static async getFilesStatus(downloadsFolder) {
         const currentFiles = await fs.promises.readdir(downloadsFolder)
         const statuses = await Promise

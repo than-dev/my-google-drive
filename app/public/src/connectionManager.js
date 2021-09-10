@@ -1,11 +1,9 @@
 export class ConnectionManager {
-    constructor({ apiUrl, onProgress }) {
-        this.apiUrl= apiUrl
+    constructor({ apiUrl }) {
+        this.apiUrl = apiUrl
 
         this.ioClient = io.connect(apiUrl, { withCredentials: false })
         this.socketId = ''
-
-        this.onProgress = this.onProgress
     }
 
     configureEvents({ onProgress }) {

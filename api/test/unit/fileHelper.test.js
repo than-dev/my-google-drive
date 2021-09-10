@@ -1,10 +1,18 @@
-import { jest } from '@jest/globals';
-import fs from 'fs';
-import { FileHelper } from '../../src/fileHelper.js';
+import {
+    describe,
+    test,
+    expect,
+    jest
+} from '@jest/globals'
+import fs from 'fs'
+import FileHelper from '../../src/fileHelper.js'
 
-describe('FileHelper', () => {
-    describe('GetFileStatus', () => {
-        it('should return files statuses in correct format', async () => {
+import Routes from './../../src/routes.js'
+
+describe('#FileHelper', () => {
+
+    describe('#getFileStatus', () => {
+        test('it should return files statuses in correct format', async () => {
             const statMock = {
                 dev: 16777220,
                 mode: 33188,
@@ -26,7 +34,7 @@ describe('FileHelper', () => {
                 birthtime: '2021-09-03T20:56:28.443Z'
             }
 
-            const mockUser = 'nathan'
+            const mockUser = 'erickwendel'
             process.env.USER = mockUser
             const filename = 'file.png'
 

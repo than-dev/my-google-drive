@@ -1,55 +1,58 @@
 import {
     describe,
-    it,
+    test,
     expect,
-    jest,
-    beforeEach
-} from '@jest/globals';
-import { resolve } from 'path';
-import fs from 'fs';
-import { logger } from '../../src/logger.js';
-import { pipeline } from 'stream/promises';
-import { UploadHandler } from '../../src/uploadHandler.js';
-import { TestUtil } from '../utils/testUtil.js';
+    beforeEach,
+    jest
+} from '@jest/globals'
+import fs from 'fs'
+import { resolve } from 'path'
+import { pipeline } from 'stream/promises'
+import { logger } from '../../src/logger.js'
+import UploadHandler from '../../src/uploadHandler.js'
+import TestUtil from '../utils/testUtil.js'
+import Routes from './../../src/routes.js'
 
-describe('Upload Handler', () => {
+describe('#UploadHandler test suite', () => {
     const ioObj = {
         to: (id) => ioObj,
         emit: (event, message) => { }
     }
-
     beforeEach(() => {
-        jest.spyOn(logger, 'info').mockImplementation()
+        jest.spyOn(logger, 'info')
+            .mockImplementation()
     })
 
-    describe('Register Events', () => {
-        it('should call onFile and onFinish on Busboy instance', async () => {
+
+    describe('#registerEvents', () => {
+        test('should call onFile and onFinish functions on Busboy instance', () => {
             const uploadHandler = new UploadHandler({
                 io: ioObj,
                 socketId: '01'
             })
 
-            jest.spyOn(uploadHandler, uploadHandler.onFile.name).mockResolvedValue()
+            jest.spyOn(uploadHandler, uploadHandler.onFile.name)
+                .mockResolvedValue()
 
             const headers = {
                 'content-type': 'multipart/form-data; boundary='
             }
             const onFinish = jest.fn()
             const busboyInstance = uploadHandler.registerEvents(headers, onFinish)
-            
-            const fileStream = TestUtil.generateReadableStream(['chunk', 'of', 'data'])
 
+            const fileStream = TestUtil.generateReadableStream(['chunk', 'of', 'data'])
             busboyInstance.emit('file', 'fieldname', fileStream, 'filename.txt')
 
-            busboyInstance.listeners('finish')[0].call()
-            
+            busboyInstance.listeners("finish")[0].call()
+
             expect(uploadHandler.onFile).toHaveBeenCalled()
             expect(onFinish).toHaveBeenCalled()
         })
+
     })
 
-    describe('On File', () => {
-        it('should save a stream on disk when given it', async () => {
+    describe('#onFile', () => {
+        test('given a stream file it should save it on disk', async () => {
             const chunks = ['hey', 'dude']
             const downloadsFolder = '/tmp'
             const handler = new UploadHandler({
@@ -60,99 +63,106 @@ describe('Upload Handler', () => {
 
             const onData = jest.fn()
 
-            jest.spyOn(fs, fs.createWriteStream.name).mockImplementation(() => TestUtil.generateWritableStream(onData))
+            jest.spyOn(fs, fs.createWriteStream.name)
+                .mockImplementation(() => TestUtil.generateWritableStream(onData))
 
             const onTransform = jest.fn()
-            
-            jest.spyOn(handler, handler.handleFileBytes.name).mockImplementation(() => TestUtil.generateTransformStream(onTransform))
+            jest.spyOn(handler, handler.handleFileBytes.name)
+                .mockImplementation(() => TestUtil.generateTransformStream(onTransform))
 
             const params = {
                 fieldname: 'video',
                 file: TestUtil.generateReadableStream(chunks),
                 filename: 'mockFile.mov'
             }
-
             await handler.onFile(...Object.values(params))
 
             expect(onData.mock.calls.join()).toEqual(chunks.join())
-
             expect(onTransform.mock.calls.join()).toEqual(chunks.join())
 
-            const expectFilename = resolve(handler.downloadsFolder, params.filename) 
+            const expectedFilename = resolve(handler.downloadsFolder, params.filename)
+            expect(fs.createWriteStream).toHaveBeenCalledWith(expectedFilename)
 
-            expect(fs.createWriteStream).toHaveBeenCalledWith(expectFilename)
 
         })
     })
 
-    describe('Handle File Bytes', () => {
-        it('should call emit function and it is a transform stream', async () => {
+
+    describe('#handleFileBytes', () => {
+        test('should call emit function and it is a transform stream', async () => {
+            jest.spyOn(ioObj, ioObj.to.name)
+            jest.spyOn(ioObj, ioObj.emit.name)
+
             const handler = new UploadHandler({
                 io: ioObj,
                 socketId: '01'
             })
-            
-            jest.spyOn(ioObj, ioObj.to.name)
-            jest.spyOn(ioObj, ioObj.emit.name)
-            jest.spyOn(handler, handler.canExecute.name).mockReturnValueOnce(true)
+
+            jest.spyOn(handler, handler.canExecute.name)
+                .mockReturnValueOnce(true)
 
             const messages = ['hello']
             const source = TestUtil.generateReadableStream(messages)
-
             const onWrite = jest.fn()
             const target = TestUtil.generateWritableStream(onWrite)
 
             await pipeline(
                 source,
-                handler.handleFileBytes('filename.txt'),
+                handler.handleFileBytes("filename.txt"),
                 target
             )
 
             expect(ioObj.to).toHaveBeenCalledTimes(messages.length)
             expect(ioObj.emit).toHaveBeenCalledTimes(messages.length)
 
-            // if handleFileBytes be a transform stream, our pipeline will continue the process, passing data to straight and call our function at target to all chunks
+            // se o handleFileBytes for um transofrm stream, nosso pipeline
+            // vai continuar o processo, passando os dados para frente
+            // e chamar nossa função no target a cada chunk
             expect(onWrite).toBeCalledTimes(messages.length)
             expect(onWrite.mock.calls.join()).toEqual(messages.join())
+
         })
 
-        it('should emit only one message during 2 seconds period', async () => {
-            const spiedEmit = jest.spyOn(ioObj, ioObj.emit.name)
+        test('given message timerDelay as 2secs it should emit only two messages during 2 seconds period', async () => {
+            jest.spyOn(ioObj, ioObj.emit.name)
 
-            const day = '2021-09-08 00:00'
-            // Date.now do this.lastMessages em handleBytes
-            const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
+
+            const day = '2021-07-01 01:01'
+            const twoSecondsPeriod = 2000
             
-            // -> hello arrived
+            // Date.now do this.lastMessageSent em handleBytes
+            const onFirstLastMessageSent = TestUtil.getTimeFromDate(`${day}:00`)
+
+            // -> hello chegou
             const onFirstCanExecute = TestUtil.getTimeFromDate(`${day}:02`)
             const onSecondUpdateLastMessageSent = onFirstCanExecute
 
-            // -> hey is out window time
+            // -> segundo hello, está fora da janela de tempo!
             const onSecondCanExecute = TestUtil.getTimeFromDate(`${day}:03`)
 
-            // -> world arrived
+            // -> world
             const onThirdCanExecute = TestUtil.getTimeFromDate(`${day}:04`)
 
+            
             TestUtil.mockDateNow(
                 [
                     onFirstLastMessageSent,
                     onFirstCanExecute,
                     onSecondUpdateLastMessageSent,
                     onSecondCanExecute,
-                    onThirdCanExecute
+                    onThirdCanExecute,
                 ]
             )
 
-            const messages = ['hello', 'hey', 'world']
+            const messages = ["hello", "hello", "world"]
             const filename = 'filename.avi'
-            const expectMessagesSent = 2
-            const messageTimeDelay = 2000
+            const expectedMessageSent = 2
 
             const source = TestUtil.generateReadableStream(messages)
             const handler = new UploadHandler({
-                messageTimeDelay,
+                messageTimeDelay: twoSecondsPeriod,
                 io: ioObj,
-                socketId: '01'
+                socketId: '01',
             })
 
             await pipeline(
@@ -160,50 +170,50 @@ describe('Upload Handler', () => {
                 handler.handleFileBytes(filename)
             )
 
-            expect(ioObj.emit).toHaveBeenCalledTimes(expectMessagesSent)
-            
+
+            expect(ioObj.emit).toHaveBeenCalledTimes(expectedMessageSent)
+
             const [firstCallResult, secondCallResult] = ioObj.emit.mock.calls
             
-            expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: 'hello'.length, filename }])
-            expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { alreadyProcessed: messages.join('').toString().length, filename }])
+            expect(firstCallResult).toEqual([handler.ON_UPLOAD_EVENT, { processedAlready: "hello".length, filename }])
+            expect(secondCallResult).toEqual([handler.ON_UPLOAD_EVENT, { processedAlready: messages.join("").length, filename }])
         })
     })
 
-    describe('Can Execute', () => {
-        it('should return true when time is later then specified delay', () => {
+    describe('#canExecute', () => {
+        test('should return true when time is later than specified delay', () => {
             const timerDelay = 1000
-
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
                 messageTimeDelay: timerDelay
             })
-            
-            const now = TestUtil.getTimeFromDate('2021-08-09 00:00:03')
-            TestUtil.mockDateNow([now])
 
-            const lastExecution = TestUtil.getTimeFromDate('2021-08-09 00:00:00')
+            const tickNow = TestUtil.getTimeFromDate('2021-07-01 00:00:03')
+            TestUtil.mockDateNow([tickNow])
+
+            const lastExecution = TestUtil.getTimeFromDate('2021-07-01 00:00:00')
 
             const result = uploadHandler.canExecute(lastExecution)
             expect(result).toBeTruthy()
+
         })
-
-        it('should return false when time is not later than specified delay', () => {
+        test('should return false when time isnt later than specified delay', () => {
             const timerDelay = 3000
-
             const uploadHandler = new UploadHandler({
                 io: {},
                 socketId: '',
                 messageTimeDelay: timerDelay
             })
-            
-            const now = TestUtil.getTimeFromDate('2021-08-09 00:00:01')
+
+            const now = TestUtil.getTimeFromDate('2021-07-01 00:00:02')
             TestUtil.mockDateNow([now])
 
-            const lastExecution = TestUtil.getTimeFromDate('2021-08-09 00:00:00')
+            const lastExecution = TestUtil.getTimeFromDate('2021-07-01 00:00:01')
 
             const result = uploadHandler.canExecute(lastExecution)
             expect(result).toBeFalsy()
         })
+
     })
 })
